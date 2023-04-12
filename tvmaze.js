@@ -7,6 +7,7 @@ const $searchForm = $("#searchForm");
 const SEARCH_ENDPOINT = "/search/shows";
 const SHOWS_ENDPOINT = "/shows/[showid]/episodes";
 const BASE_URL = "https://api.tvmaze.com";
+const MISSING_LINK = "https://tinyurl.com/tv-missing";
 
 /** Given a search term, search for tv shows that match that query.
  *
@@ -18,29 +19,33 @@ const BASE_URL = "https://api.tvmaze.com";
 async function getShowsByTerm(term) {
   // ADD: Remove placeholder & make request to TVMaze search shows API.
 
-  let showData = await axios.get(`${BASE_URL}${SEARCH_ENDPOINT}`, {
+  const showData = await axios.get(`${BASE_URL}${SEARCH_ENDPOINT}`, {
     params: { q: term },
   });
 
   // let showId = showData.data[0].show.id;
   // let showName = showData.data[0].show.name;
   // let showSummary = showData.data[0].show.summary;
-  // let showImage = showData.data[0].show.image.original;
+  //let showImage = showData.data[0].show.image.original;
 
   //console.log([showId, showName, showSummary, showImage]);
   //for(let how in showData.data){
 
   //}
-  let result = showData.data.map((el) => {
+  let tvShows = showData.data.map((el) => {
+
+    // if(el.show.image === null || el.show.image === undefined){
+    //   el.show.image = {original: MISSING_LINK}
+    // }
     return {
       id: el.show.id,
       name: el.show.name,
       summary: el.show.summary,
-      image: el.show.image.original || "https://tinyurl.com/tv-missing",
+      image: (el.show.image?.original || MISSING_LINK) //check if we can access 'image'
     };
   });
 
-  return result;
+  return tvShows;
 }
 
 /** Given list of shows, create markup for each and append to DOM.
@@ -52,14 +57,13 @@ function displayShows(shows) {
   $showsList.empty();
 
   for (const show of shows) {
-    let imageSource = show.image;
 
     const $show = $(`
         <div data-show-id="${show.id}" class="Show col-md-12 col-lg-6 mb-4">
          <div class="media">
            <img
-              src= ${imageSource}
-              alt="Bletchly Circle San Francisco"
+              src= ${show.image}
+              alt= ${show.name}
               class="w-25 me-3">
            <div class="media-body">
              <h5 class="text-primary">${show.name}</h5>
