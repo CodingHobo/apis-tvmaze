@@ -5,7 +5,7 @@ const $episodesArea = $("#episodesArea");
 const $searchForm = $("#searchForm");
 
 const SEARCH_ENDPOINT = "/search/shows";
-const SHOWS_ENDPOINT = "/shows/[showid]/episodes";
+const EPISODES_ENDPOINT = "/shows/"
 const BASE_URL = "https://api.tvmaze.com";
 const MISSING_LINK = "https://tinyurl.com/tv-missing";
 
@@ -101,7 +101,21 @@ $searchForm.on("submit", async function handleSearchForm(evt) {
  *      { id, name, season, number }
  */
 
-// async function getEpisodesOfShow(id) { }
+async function getEpisodesOfShow(id) {
+
+  const episodeData = await axios.get(`${BASE_URL}${EPISODES_ENDPOINT}${id}/episodes`);
+
+  const episodes = episodeData.data.map((el) => {
+    return {
+     id: el.id,
+     name: el.name,
+     season: el.season,
+     number: el.number
+    }
+  })
+  console.log(episodes)
+return episodes;
+}
 
 /** Write a clear docstring for this function... */
 
