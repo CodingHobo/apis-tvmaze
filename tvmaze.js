@@ -2,6 +2,7 @@
 
 const $showsList = $("#showsList");
 const $episodesArea = $("#episodesArea");
+const $episodesList = $("#episodesList");
 const $searchForm = $("#searchForm");
 
 const SEARCH_ENDPOINT = "/search/shows";
@@ -81,7 +82,7 @@ function displayShows(shows) {
 }
 
 /** Handle search form submission: get shows from API and display.
- *    Hide episodes area (that only gets shown if they ask for episodes)
+ *    Hide episodes aconst $episodesArea = $("#episodesArea");ea (that only gets shown if they ask for episodes)
  */
 
 async function searchShowsAndDisplay() {
@@ -105,6 +106,7 @@ async function getEpisodesOfShow(id) {
 
   const episodeData = await axios.get(`${BASE_URL}${EPISODES_ENDPOINT}${id}/episodes`);
 
+
   const episodes = episodeData.data.map((el) => {
     return {
      id: el.id,
@@ -113,12 +115,29 @@ async function getEpisodesOfShow(id) {
      number: el.number
     }
   })
-  console.log(episodes)
+  //console.log(episodes)
 return episodes;
 }
 
-/** Write a clear docstring for this function... */
+/**
+ * Accepts an array of objects representing episodes
+ * populates that into the #episodesList part of the DOM.
+ * */
+//const $episodesList = $("#episodesList");
 
-// function displayEpisodes(episodes) { }
+function displayEpisodes(episodes) {
+  console.log("displayEpisodes", "episodes=", episodes);
+  $episodesArea.removeAttr('style');
+
+  for(let ep of episodes){
+
+    let $episodeLi = $(`<li> ${ep.name} (season ${ep.season}, number ${ep.number})</li>`);
+    //let episodeLi = `${ep.name} (season ${ep.season}, number ${ep.number}`;
+    //$episodeLi.append(episodeLi);
+
+    $episodesList.append($episodeLi)
+  }
+
+}
 
 // add other functions that will be useful / match our structure & design
